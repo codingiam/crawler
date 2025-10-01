@@ -37,20 +37,24 @@ func main() {
 		go cfg.crawlPage(baseURL)
 		cfg.wg.Wait()
 
-		for normalizedURL, page := range cfg.pages {
-			fmt.Printf("%v - %s\n", page.H1, normalizedURL)
+		// for normalizedURL, page := range cfg.pages {
+		// 	fmt.Printf("%v - %s\n", page.H1, normalizedURL)
+		// }
+
+		err = writeCSVRport(cfg.pages, "report.csv")
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	} else {
+		if argc < 1 {
+			fmt.Println("no website provided")
+		} else if argc > 3 {
+			fmt.Println("too many arguments provided")
+		} else {
+			fmt.Println("too few arguments provided")
 		}
 
-		os.Exit(0)
+		os.Exit(1)
 	}
-
-	if argc < 1 {
-		fmt.Println("no website provided")
-	} else if argc > 3 {
-		fmt.Println("too many arguments provided")
-	} else {
-		fmt.Println("too few arguments provided")
-	}
-
-	os.Exit(1)
 }
