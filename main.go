@@ -12,14 +12,21 @@ func main() {
 	if argc == 1 {
 		baseURL := args[0]
 
+		const max = 3
+		cfg, err := configure(baseURL, max)
+		if err != nil {
+			fmt.Printf("Error - configure: %v", err)
+			return
+		}
+
 		fmt.Println("starting crawl of:", baseURL)
 
-		pages := make(map[string]int)
+		cfg.wg.Add(1)
+		go cfg.crawlPage(baseURL)
+		cfg.wg.Wait()
 
-		crawlPage(baseURL, baseURL, pages)
-
-		for normalizedURL, count := range pages {
-			fmt.Printf("%d - %s\n", count, normalizedURL)
+		for normalizedURL, page := range cfg.pages {
+			fmt.Printf("%v - %s\n", page.H1, normalizedURL)
 		}
 
 		os.Exit(0)
