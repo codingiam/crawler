@@ -12,6 +12,10 @@ func (cfg *config) crawlPage(rawCurrentURL string) {
 		cfg.wg.Done()
 	}()
 
+	if cfg.stopCrawl() {
+		return
+	}
+
 	baseURL := cfg.baseURL
 	rawBaseURL := baseURL.String()
 

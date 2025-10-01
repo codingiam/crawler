@@ -3,17 +3,29 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func main() {
 	args := os.Args[1:]
 	argc := len(args)
 
-	if argc == 1 {
+	if argc == 3 {
 		baseURL := args[0]
 
-		const max = 3
-		cfg, err := configure(baseURL, max)
+		maxConcurrency, err := strconv.Atoi(args[1])
+		if err != nil {
+			fmt.Printf("Error - maxConcurrency: %v", err)
+			return
+		}
+
+		maxPages, err := strconv.Atoi(args[2])
+		if err != nil {
+			fmt.Printf("Error - maxPages: %v", err)
+			return
+		}
+
+		cfg, err := configure(baseURL, maxConcurrency, maxPages)
 		if err != nil {
 			fmt.Printf("Error - configure: %v", err)
 			return
@@ -34,8 +46,10 @@ func main() {
 
 	if argc < 1 {
 		fmt.Println("no website provided")
-	} else if argc > 1 {
+	} else if argc > 3 {
 		fmt.Println("too many arguments provided")
+	} else {
+		fmt.Println("too few arguments provided")
 	}
 
 	os.Exit(1)
